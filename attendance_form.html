@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ลงเวลาฝึกงาน</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --green:#2d6a4f;--green-l:#52b788;--green-xl:#d8f3dc;
+  --red:#c0392b;--red-l:#fde8e4;
+  --orange:#e67e22;
+  --ink:#1c1a14;--ink2:#6b6560;
+  --bg:#f6f3ee;--card:#ffffff;--border:#ddd8cc;
+  --shadow:0 4px 24px rgba(28,26,20,.10);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Noto Sans Thai',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px 16px 48px}
+
+.card{background:var(--card);border-radius:20px;width:100%;max-width:440px;box-shadow:var(--shadow);overflow:hidden;margin:0 auto}
+.hdr{background:var(--green);padding:22px 20px 18px;color:#fff;text-align:center}
+.hdr-icon{font-size:34px;margin-bottom:6px}
+.hdr h1{font-size:19px;font-weight:700}
+.hdr .sub{font-size:12px;opacity:.75;margin-top:3px}
+.hdr .dt{font-size:11px;opacity:.6;margin-top:2px;font-family:'DM Mono',monospace}
+
+.sbar{display:flex;border-bottom:1px solid var(--border)}
+.sbar-i{flex:1;text-align:center;padding:11px 4px;font-size:12px;color:var(--ink2);font-weight:500;border-bottom:2.5px solid transparent;transition:.2s}
+.sbar-i.on{color:var(--green);border-bottom-color:var(--green)}
+.sbar-i.done{color:var(--green-l)}
+.sbar-i .n{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:var(--border);color:var(--ink2);font-size:10px;margin-right:3px;transition:.2s}
+.sbar-i.on .n{background:var(--green);color:#fff}
+.sbar-i.done .n{background:var(--green-l);color:#fff}
+
+.body{padding:20px 18px}
+.step{display:none}.step.on{display:block}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:4px}
+.fg input{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;color:var(--ink);font-family:'Noto Sans Thai',sans-serif;font-size:15px;outline:none;transition:.2s;-webkit-appearance:none}
+.fg input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(45,106,79,.1)}
+
+/* Signature */
+.sig-wrap{border:2px dashed var(--border);border-radius:12px;overflow:hidden;background:#fff;margin-bottom:10px;position:relative;transition:.2s}
+.sig-wrap.active{border:2px solid var(--green)}
+#sigCanvas{display:block;width:100%;touch-action:none;cursor:crosshair}
+.sig-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;transition:opacity .25s;color:var(--ink2)}
+.sig-hint .hi{font-size:24px;margin-bottom:3px}
+.sig-hint.gone{opacity:0}
+.sig-row{display:flex;gap:8px;margin-bottom:10px}
+
+/* Buttons */
+.btn{width:100%;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:700;font-family:'Noto Sans Thai',sans-serif;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn:active{transform:scale(.97);opacity:.88}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-green{background:var(--green);color:#fff}
+.btn-red{background:var(--red);color:#fff}
+.btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--ink2);border-radius:9px;padding:10px 14px;font-size:13px;font-family:'Noto Sans Thai',sans-serif;cursor:pointer}
+.btn-out{background:#fff;color:var(--green);border:1.5px solid var(--green);border-radius:12px;padding:11px;font-size:14px;font-weight:600;font-family:'Noto Sans Thai',sans-serif;cursor:pointer;width:100%}
+
+.btn-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+
+/* Success */
+.suc{text-align:center;padding:8px 0}
+.suc-circle{width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:34px;margin:0 auto 14px;animation:pop .5s cubic-bezier(.34,1.56,.64,1)}
+.suc-circle.in{background:linear-gradient(135deg,var(--green),var(--green-l));box-shadow:0 8px 28px rgba(45,106,79,.3)}
+.suc-circle.out{background:linear-gradient(135deg,var(--red),#e74c3c);box-shadow:0 8px 28px rgba(192,57,43,.3)}
+@keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.suc-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:8px}
+.suc-badge.in{background:var(--green-xl);color:var(--green)}
+.suc-badge.out{background:var(--red-l);color:var(--red)}
+.suc-name{font-size:21px;font-weight:700;margin-bottom:3px}
+.suc-time{font-family:'DM Mono',monospace;font-size:20px;margin-bottom:14px}
+.suc-time.in{color:var(--green)}
+.suc-time.out{color:var(--red)}
+.suc-detail{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:13px;text-align:left;font-size:13px;line-height:2;color:var(--ink2)}
+.suc-detail b{color:var(--ink);font-weight:600}
+
+/* Spinner */
+.spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top:2px solid #fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
+.spinner.on{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Toast */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;border-radius:12px;padding:11px 20px;font-size:13px;z-index:9999;transition:transform .28s;white-space:nowrap;box-shadow:0 6px 24px rgba(0,0,0,.25);max-width:90vw;white-space:normal;text-align:center}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.err{background:var(--red)}
+
+/* Web App URL input */
+
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+
+<div class="card">
+  <div class="hdr">
+    <div class="hdr-icon">📋</div>
+    <h1>ลงเวลาเข้า-ออก ฝึกงาน</h1>
+    <div class="sub">กรอกข้อมูล เซ็นชื่อ แล้วกดลงเวลา</div>
+    <div class="dt" id="dateLabel">—</div>
+  </div>
+
+  <div class="sbar">
+    <div class="sbar-i on" id="sb1"><span class="n">1</span>ข้อมูล</div>
+    <div class="sbar-i" id="sb2"><span class="n">2</span>เซ็นชื่อ</div>
+    <div class="sbar-i" id="sb3"><span class="n">3</span>เสร็จ</div>
+  </div>
+
+  <div class="body">
+
+    <!-- STEP 1: ข้อมูล -->
+    <div class="step on" id="s1">
+      <div class="row2">
+        <div class="fg"><label>ชื่อ *</label><input id="uFirst" type="text" placeholder="ชื่อ"></div>
+        <div class="fg"><label>นามสกุล *</label><input id="uLast" type="text" placeholder="นามสกุล"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>รหัสนักศึกษา</label><input id="uCode" type="text" placeholder="65010001" inputmode="numeric"></div>
+        <div class="fg"><label>ห้อง / กลุ่ม *</label><input id="uRoom" type="text" placeholder="เช่น ม.5/2"></div>
+      </div>
+      <div class="fg"><label>สถานที่ฝึกงาน *</label><input id="uLocation" type="text" placeholder="เช่น บริษัท ABC จำกัด"></div>
+      <button class="btn btn-green" onclick="toStep2()">ถัดไป →</button>
+    </div>
+
+    <!-- STEP 2: เซ็นชื่อ + เลือก เข้า/ออก -->
+    <div class="step" id="s2">
+      <p style="font-size:13px;color:var(--ink2);margin-bottom:12px;line-height:1.7">✍️ เซ็นลายมือชื่อของคุณในกล่องด้านล่าง<br><span style="font-size:11px">ใช้นิ้วลากบนหน้าจอ</span></p>
+      <div class="sig-wrap" id="sigWrap">
+        <canvas id="sigCanvas"></canvas>
+        <div class="sig-hint" id="sigHint"><div class="hi">✍️</div><div>เซ็นชื่อที่นี่</div></div>
+      </div>
+      <div class="sig-row">
+        <button class="btn-ghost" style="flex:1" onclick="clearSig()">🗑 ล้าง</button>
+      </div>
+
+      <!-- ปุ่มเข้า/ออก -->
+      <div class="btn-pair">
+        <button class="btn btn-green" id="btnIn" onclick="doSubmit('checkin')">
+          <span>🟢 ลงเวลาเข้า</span>
+          <div class="spinner" id="spinIn"></div>
+        </button>
+        <button class="btn btn-red" id="btnOut" onclick="doSubmit('checkout')">
+          <span>🔴 ลงเวลาออก</span>
+          <div class="spinner" id="spinOut"></div>
+        </button>
+      </div>
+      <button class="btn-ghost" style="width:100%;text-align:center" onclick="toStep1()">← แก้ไขข้อมูล</button>
+    </div>
+
+    <!-- STEP 3: สำเร็จ -->
+    <div class="step" id="s3">
+      <div class="suc">
+        <div class="suc-circle" id="sucCircle"></div>
+        <div class="suc-badge" id="sucBadge"></div>
+        <div class="suc-name" id="sucName"></div>
+        <div class="suc-time" id="sucTime"></div>
+        <div class="suc-detail" id="sucDetail"></div>
+        <br>
+        <button class="btn-out" onclick="resetForm()">🔄 บันทึกคนถัดไป</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ===== CONFIG =====
+var WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxWSARFmL_MAwpQjZXsoym4Uh5Gj6ksDSMFN37CK2WJraNWcQ1vcip7SNArwUb-q8Ai/exec';
+
+// ===== DATE =====
+var todayStr = '';
+(function(){
+  var now = new Date();
+  document.getElementById('dateLabel').textContent =
+    now.toLocaleDateString('th-TH',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  var opts = {timeZone:'Asia/Bangkok',year:'numeric',month:'2-digit',day:'2-digit'};
+  var p = new Intl.DateTimeFormat('en-GB',opts).formatToParts(now);
+  var g = function(t){ return (p.find(function(x){return x.type===t;})||{value:''}).value; };
+  todayStr = g('day')+'/'+g('month')+'/'+g('year');
+})();
+
+function getNow() {
+  var now = new Date();
+  var opts = {timeZone:'Asia/Bangkok',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false};
+  var p = new Intl.DateTimeFormat('en-GB',opts).formatToParts(now);
+  var g = function(t){ return (p.find(function(x){return x.type===t;})||{value:''}).value; };
+  return g('hour')+':'+g('minute')+':'+g('second');
+}
+
+// ===== STEPS =====
+function setStep(n){
+  [1,2,3].forEach(function(i){
+    document.getElementById('s'+i).classList.toggle('on', i===n);
+    var sb = document.getElementById('sb'+i);
+    sb.className = 'sbar-i'+(i===n?' on':i<n?' done':'');
+  });
+}
+function toStep1(){ setStep(1); }
+function toStep2(){
+  if (!v('uFirst')||!v('uLast')){ toast('กรุณากรอกชื่อและนามสกุล','err'); return; }
+  if (!v('uRoom')){ toast('กรุณากรอกห้อง/กลุ่ม','err'); return; }
+  if (!v('uLocation')){ toast('กรุณากรอกสถานที่ฝึกงาน','err'); return; }
+  setStep(2);
+  requestAnimationFrame(function(){ setTimeout(initSig, 50); });
+}
+
+// ===== SIGNATURE =====
+var sc, sx, drawing=false, hasSig=false, sigInited=false;
+function initSig(){
+  sc = document.getElementById('sigCanvas');
+  var wrap = document.getElementById('sigWrap');
+  var dpr = window.devicePixelRatio || 1;
+  var w = wrap.offsetWidth || 320;
+  var h = 180;
+  sc.width = Math.floor(w * dpr);
+  sc.height = Math.floor(h * dpr);
+  sc.style.width = w + 'px';
+  sc.style.height = h + 'px';
+  sx = sc.getContext('2d');
+  sx.scale(dpr, dpr);
+  sx.strokeStyle = '#1c1a14'; sx.lineWidth = 2.5; sx.lineCap = 'round'; sx.lineJoin = 'round';
+  if (sigInited) return;
+  sigInited = true;
+  function getPos(e){
+    var r = sc.getBoundingClientRect();
+    return { x:(e.clientX-r.left)*(w/r.width), y:(e.clientY-r.top)*(h/r.height) };
+  }
+  function startD(e){ drawing=true; var p=getPos(e); sx.beginPath(); sx.moveTo(p.x,p.y); document.getElementById('sigWrap').classList.add('active'); document.getElementById('sigHint').classList.add('gone'); }
+  function drawD(e){ if(!drawing)return; var p=getPos(e); sx.lineTo(p.x,p.y); sx.stroke(); hasSig=true; }
+  function endD(){ drawing=false; document.getElementById('sigWrap').classList.remove('active'); }
+  sc.addEventListener('mousedown',startD);
+  sc.addEventListener('mousemove',drawD);
+  sc.addEventListener('mouseup',endD);
+  sc.addEventListener('mouseleave',endD);
+  sc.addEventListener('touchstart',function(e){e.preventDefault();startD(e.touches[0]);},{passive:false});
+  sc.addEventListener('touchmove',function(e){e.preventDefault();drawD(e.touches[0]);},{passive:false});
+  sc.addEventListener('touchend',endD,{passive:false});
+}
+function clearSig(){
+  if(!sc||!sx)return;
+  sx.clearRect(0,0,sc.width,sc.height);
+  hasSig=false;
+  document.getElementById('sigHint').classList.remove('gone');
+}
+
+// ===== SUBMIT =====
+async function doSubmit(action) {
+  if (!WEB_APP_URL) {
+    toStep1();
+    toast('กรุณาตั้งค่า Web App URL ก่อนครับ','err');
+    return;
+  }
+  if (!hasSig && action === 'checkin') { toast('กรุณาเซ็นลายมือชื่อก่อน','err'); return; }
+
+  var timeNow = getNow();
+  var payload = {
+    action: action,
+    date: todayStr,
+    time: timeNow,
+    first: v('uFirst'),
+    last: v('uLast'),
+    code: v('uCode'),
+    room: v('uRoom'),
+    location: v('uLocation'),
+    sig: (action === 'checkin' && sc) ? sc.toDataURL('image/png') : ''
+  };
+
+  // แสดง spinner
+  var spinId = action === 'checkin' ? 'spinIn' : 'spinOut';
+  var btnId  = action === 'checkin' ? 'btnIn'  : 'btnOut';
+  document.getElementById(spinId).classList.add('on');
+  document.getElementById(btnId).disabled = true;
+
+  try {
+    var res = await fetch(WEB_APP_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    var json = await res.json();
+
+    if (json.status === 'ok') {
+      showSuccess(action, timeNow, payload);
+    } else {
+      toast('❌ ' + (json.message || 'เกิดข้อผิดพลาด'), 'err');
+    }
+  } catch(err) {
+    toast('❌ เชื่อมต่อไม่ได้ ตรวจสอบ URL อีกครั้ง', 'err');
+  } finally {
+    document.getElementById(spinId).classList.remove('on');
+    document.getElementById(btnId).disabled = false;
+  }
+}
+
+function showSuccess(action, timeNow, d) {
+  var isIn = action === 'checkin';
+  var circle = document.getElementById('sucCircle');
+  circle.className = 'suc-circle ' + (isIn ? 'in' : 'out');
+  circle.textContent = isIn ? '✓' : '👋';
+
+  var badge = document.getElementById('sucBadge');
+  badge.className = 'suc-badge ' + (isIn ? 'in' : 'out');
+  badge.textContent = isIn ? '🟢 ลงเวลาเข้า' : '🔴 ลงเวลาออก';
+
+  document.getElementById('sucName').textContent = d.first + ' ' + d.last;
+  var timeEl = document.getElementById('sucTime');
+  timeEl.textContent = timeNow;
+  timeEl.className = 'suc-time ' + (isIn ? 'in' : 'out');
+
+  document.getElementById('sucDetail').innerHTML =
+    '📅 <b>'+esc(d.date)+'</b><br>'+
+    '🏢 <b>'+esc(d.location)+'</b><br>'+
+    (d.room ? '🏫 ห้อง <b>'+esc(d.room)+'</b><br>' : '')+
+    (d.code ? '🪪 รหัส <b>'+esc(d.code)+'</b>' : '');
+
+  setStep(3);
+}
+
+function resetForm(){
+  ['uFirst','uLast','uCode','uRoom','uLocation'].forEach(function(id){
+    document.getElementById(id).value='';
+  });
+  hasSig=false; sigInited=false; sc=null; sx=null;
+  document.getElementById('sigHint').classList.remove('gone');
+  setStep(1);
+}
+
+function v(id){ return document.getElementById(id).value.trim(); }
+function esc(s){ return String(s||'').replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]);}); }
+function toast(msg,type){
+  var t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast show'+(type==='err'?' err':'');
+  setTimeout(function(){t.classList.remove('show');},3000);
+}
+</script>
+</body>
+</html>

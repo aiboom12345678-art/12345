@@ -105,7 +105,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:linear-gradient(135deg,#
 </head>
 <body>
 <div class="toast" id="toast"></div>
-
+ 
 <!-- ===== MAIN PAGE ===== -->
 <div id="pageMain" class="card" style="display:block">
   <div class="hdr">
@@ -116,13 +116,13 @@ body{font-family:'Noto Sans Thai',sans-serif;background:linear-gradient(135deg,#
     <div class="dt" id="dateLabel">—</div>
     <button class="admin-btn" onclick="showAdminLogin()">⚙️ Admin</button>
   </div>
-
+ 
   <div class="sbar">
     <div class="sbar-i on" id="sb1"><span class="n">1</span>ข้อมูล</div>
     <div class="sbar-i" id="sb2"><span class="n">2</span>เซ็นชื่อ</div>
     <div class="sbar-i" id="sb3"><span class="n">3</span>เสร็จ</div>
   </div>
-
+ 
   <div class="body">
     <!-- STEP 1 -->
     <div class="step on" id="s1">
@@ -162,7 +162,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:linear-gradient(135deg,#
       </div>
       <button class="btn btn-pu" onclick="toStep2()">ถัดไป →</button>
     </div>
-
+ 
     <!-- STEP 2 -->
     <div class="step" id="s2">
       <p style="font-size:13px;color:var(--ink2);margin-bottom:12px;line-height:1.7">✍️ เซ็นลายมือชื่อของคุณในกล่องด้านล่าง<br><span style="font-size:11px">ใช้นิ้วลากบนหน้าจอ</span></p>
@@ -183,7 +183,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:linear-gradient(135deg,#
       </div>
       <button class="btn-ghost" style="width:100%;text-align:center" onclick="toStep1()">← แก้ไขข้อมูล</button>
     </div>
-
+ 
     <!-- STEP 3 -->
     <div class="step" id="s3">
       <div class="suc">
@@ -198,7 +198,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:linear-gradient(135deg,#
     </div>
   </div>
 </div>
-
+ 
 <!-- ===== ADMIN LOGIN ===== -->
 <div id="pageAdminLogin" class="card" style="display:none">
   <div class="admin-hdr">
@@ -211,7 +211,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:linear-gradient(135deg,#
     <button class="btn btn-pu" onclick="checkPass()">เข้าสู่ระบบ</button>
   </div>
 </div>
-
+ 
 <!-- ===== ADMIN PAGE ===== -->
 <div id="pageAdmin" class="card" style="display:none">
   <div class="admin-hdr">
@@ -219,7 +219,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:linear-gradient(135deg,#
     <button class="back-btn" onclick="showMain()">← กลับ</button>
   </div>
   <div class="admin-body">
-
+ 
     <!-- ชื่อ-นามสกุล -->
     <div class="admin-section">
       <h3>👤 ชื่อ-นามสกุล</h3>
@@ -229,7 +229,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:linear-gradient(135deg,#
         <button onclick="addItem('name')">+</button>
       </div>
     </div>
-
+ 
     <!-- รหัสนักศึกษา -->
     <div class="admin-section">
       <h3>🪪 รหัสนักศึกษา</h3>
@@ -239,7 +239,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:linear-gradient(135deg,#
         <button onclick="addItem('code')">+</button>
       </div>
     </div>
-
+ 
     <!-- ห้อง/กลุ่ม -->
     <div class="admin-section">
       <h3>🏫 ห้อง / กลุ่ม</h3>
@@ -249,7 +249,7 @@ body{font-family:'Noto Sans Thai',sans-serif;background:linear-gradient(135deg,#
         <button onclick="addItem('room')">+</button>
       </div>
     </div>
-
+ 
     <!-- สถานที่ฝึกงาน -->
     <div class="admin-section">
       <h3>🏢 สถานที่ฝึกงาน</h3>
@@ -259,23 +259,23 @@ body{font-family:'Noto Sans Thai',sans-serif;background:linear-gradient(135deg,#
         <button onclick="addItem('location')">+</button>
       </div>
     </div>
-
+ 
   </div>
 </div>
-
+ 
 <script>
 var WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwjwvxsOoJb6jCIhRrE5kBwruQwObG5WgGxAlBm1GXSdNtMLGbvl0IPAbtCCEsXwSpa/exec';
 var ADMIN_PASS = '1234';
-
+ 
 // ===== STORAGE HELPERS =====
 var KEYS = { name:'studentNames', code:'studentCodes', room:'studentRooms', location:'studentLocations' };
 var SEL_IDS = { name:'uName', code:'uCode', room:'uRoom', location:'uLocation' };
 var LIST_IDS = { name:'listName', code:'listCode', room:'listRoom', location:'listLocation' };
 var ADD_IDS  = { name:'addName', code:'addCode', room:'addRoom', location:'addLocation' };
-
+ 
 function getItems(type){ try{ return JSON.parse(localStorage.getItem(KEYS[type])||'[]'); }catch(e){return[];} }
 function saveItems(type,arr){ localStorage.setItem(KEYS[type], JSON.stringify(arr)); }
-
+ 
 function renderDropdowns(){
   Object.keys(KEYS).forEach(function(type){
     var sel = document.getElementById(SEL_IDS[type]);
@@ -284,7 +284,7 @@ function renderDropdowns(){
     items.forEach(function(v){ var o=document.createElement('option'); o.value=v; o.textContent=v; sel.appendChild(o); });
   });
 }
-
+ 
 function renderAdminLists(){
   Object.keys(KEYS).forEach(function(type){
     var el = document.getElementById(LIST_IDS[type]);
@@ -295,7 +295,7 @@ function renderAdminLists(){
     }).join('');
   });
 }
-
+ 
 function addItem(type){
   var val = document.getElementById(ADD_IDS[type]).value.trim();
   if(!val){ toast('กรุณากรอกข้อมูล','err'); return; }
@@ -308,7 +308,7 @@ function addItem(type){
   renderDropdowns();
   toast('เพิ่ม "'+val+'" แล้ว ✅');
 }
-
+ 
 function delItem(type, i){
   var items = getItems(type);
   var removed = items[i];
@@ -318,7 +318,7 @@ function delItem(type, i){
   renderDropdowns();
   toast('ลบ "'+removed+'" แล้ว');
 }
-
+ 
 // ===== PAGE SWITCH =====
 function showMain(){
   document.getElementById('pageMain').style.display='block';
@@ -341,7 +341,7 @@ function checkPass(){
   if(document.getElementById('passInput').value===ADMIN_PASS){ showAdmin(); }
   else{ toast('รหัสผ่านไม่ถูกต้อง','err'); }
 }
-
+ 
 // ===== DATE =====
 var todayStr='';
 (function(){
@@ -353,7 +353,7 @@ var todayStr='';
   todayStr=g('day')+'/'+g('month')+'/'+g('year');
   renderDropdowns();
 })();
-
+ 
 function getNow(){
   var now=new Date();
   var opts={timeZone:'Asia/Bangkok',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false};
@@ -361,7 +361,7 @@ function getNow(){
   var g=function(t){return(p.find(function(x){return x.type===t;})||{value:''}).value;};
   return g('hour')+':'+g('minute')+':'+g('second');
 }
-
+ 
 // ===== STEPS =====
 function setStep(n){
   [1,2,3].forEach(function(i){
@@ -378,7 +378,7 @@ function toStep2(){
   setStep(2);
   requestAnimationFrame(function(){ setTimeout(initSig,50); });
 }
-
+ 
 // ===== SIGNATURE =====
 var sc,sx,drawing=false,hasSig=false,sigInited=false;
 function initSig(){
@@ -401,7 +401,7 @@ function initSig(){
   sc.addEventListener('touchend',endD,{passive:false});
 }
 function clearSig(){ if(!sc||!sx)return; sx.clearRect(0,0,sc.width,sc.height); hasSig=false; document.getElementById('sigHint').classList.remove('gone'); }
-
+ 
 // ===== SUBMIT =====
 async function doSubmit(action){
   if(!hasSig&&action==='checkin'){ toast('กรุณาเซ็นลายมือชื่อก่อน','err'); return; }
@@ -420,7 +420,7 @@ async function doSubmit(action){
   }catch(err){ toast('❌ เชื่อมต่อไม่ได้','err'); }
   finally{ document.getElementById(spinId).classList.remove('on'); document.getElementById(btnId).disabled=false; }
 }
-
+ 
 function showSuccess(action,timeNow,d){
   var isIn=action==='checkin';
   var circle=document.getElementById('sucCircle'); circle.className='suc-circle '+(isIn?'in':'out'); circle.textContent=isIn?'✓':'👋';
@@ -430,17 +430,18 @@ function showSuccess(action,timeNow,d){
   document.getElementById('sucDetail').innerHTML='📅 <b>'+esc(d.date)+'</b><br>🏢 <b>'+esc(d.location)+'</b><br>'+(d.room?'🏫 ห้อง <b>'+esc(d.room)+'</b><br>':'')+(d.code?'🪪 รหัส <b>'+esc(d.code)+'</b>':'');
   setStep(3);
 }
-
+ 
 function resetForm(){
   Object.keys(SEL_IDS).forEach(function(type){ document.getElementById(SEL_IDS[type]).value=''; });
   hasSig=false; sigInited=false; sc=null; sx=null;
   document.getElementById('sigHint').classList.remove('gone');
   setStep(1);
 }
-
+ 
 function v(id){return document.getElementById(id).value.trim();}
 function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]);});}
 function toast(msg,type){var t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type==='err'?' err':'');setTimeout(function(){t.classList.remove('show');},3000);}
 </script>
 </body>
 </html>
+ 
